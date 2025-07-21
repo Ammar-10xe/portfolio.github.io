@@ -86,6 +86,8 @@ export default function Profile({ animation }: { animation: string }) {
         bgGradient={gradient}
         bgSize="300% 100%"
         animation={animation}
+        mt={{ base: "2rem", md: "2rem" }}
+        objectPosition={{ base: "center 10%", md: "center 10%" }}
       />
     );
   }
