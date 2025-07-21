@@ -1,13 +1,11 @@
 import { Tag, Text, Wrap, WrapItem } from "@chakra-ui/react";
 
 const positions = [
-  "Software Engineering",
-  "Web Development",
-  "Cybersecurity",
-  "Machine Learning",
-  "Web 3.0",
-  "DevOps",
-  "Blockchain Development",
+  "Verification Engineer",
+  "Hardware Verification Engineer",
+  "Functional Verification Engineer",
+  "Desgin Verification Engineer",
+  "ASIC Verification Engineer",
 ];
 
 export default function InterestedPositions() {
