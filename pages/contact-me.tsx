@@ -128,7 +128,7 @@ export default function ContactMe() {
               color={textColor}
               textAlign="center" // Explicitly ensure left alignment for all lines
             >
-              I'm actively seeking impactful roles in <Text as="span" fontWeight="bold">Functional Verification Engineer</Text>. Whether you have a challenging project, a career opportunity, or just want to discuss the future of tech, I'm eager to connect.
+              I&apos;m actively seeking impactful roles in <Text as="span" fontWeight="bold">Functional Verification Engineer</Text>. Whether you have a challenging project, a career opportunity, or just want to discuss the future of tech, I&apos;m eager to connect.
             </MotionText>
           </MotionVStack>
 
