@@ -64,7 +64,7 @@ export default function Profile({ animation }: { animation: string }) {
     return (
       <Image
         src="/images/profile.png"
-        alt="Kevin's Profile"
+        alt="Ammar's Profile"
         padding={{
           base: "0.4rem",
           sm: "0.5rem",
