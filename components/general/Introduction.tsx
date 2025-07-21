@@ -40,7 +40,7 @@ export default function Introduction({ animation }: { animation: string }) {
   }
 
   function buildGithubLink() {
-    const text = "kevinchangjk";
+    const text = "Ammar Sarwar";
     const route = profile.socialMedia.github;
     return (
       <PrimaryLink href={route} color={primaryColor} thickness="2px">
@@ -114,11 +114,11 @@ export default function Introduction({ animation }: { animation: string }) {
           _light={{ color: "gray.3" }}
           _dark={{ color: "gray.4" }}
         >
-          {"I'm"} {buildGithubLink()}, a software developer based in Singapore.
+          {"I'm"} {buildGithubLink()}, a design verification engineer based in Pakistan.
           I{" don't"} want to prattle on too much{" "}
           {buildLink("about me", "/about")}, but programming is my passion, and
           I enjoy working on all kinds of {buildLink("projects", "/projects")},
-          from web to mobile development. Feel free to{" "}
+          from UVM and SystemVerilog to RISC-V. Feel free to{" "}
           {buildLink("contact me", "/contact-me")} any time for a chat.
         </Box>
       </VStack>

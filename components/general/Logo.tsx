@@ -50,7 +50,7 @@ export default function Logo() {
         textColor="transparent"
         animation={gradientFlowAnimation}
       >
-        kevinchangjk
+        Ammar's Portfolio
       </Heading>
     </Button>
   );
