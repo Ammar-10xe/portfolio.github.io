@@ -1,5 +1,5 @@
 // Resume file path
-export const resumeFileName = "/Kevin_Chang_Jon_Kit_Resume.pdf";
+export const resumeFileName = "/Ammar_Sarwar_Design_Verification_Engineer.pdf";
 
 // Wakatime
 export const lightWakatime =

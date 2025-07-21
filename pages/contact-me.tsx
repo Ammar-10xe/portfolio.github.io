@@ -126,7 +126,7 @@ export default function ContactMe() {
                   "2xl": "6xl",
                 }}
               >
-                <LinkOverlay href="mailto:kevinchangjk@gmail.com">
+                <LinkOverlay href="mailto:ammark561@gmail.com">
                   ammark561@gmail.com
                 </LinkOverlay>
               </Heading>
