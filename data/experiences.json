@@ -33,16 +33,22 @@
   ],
   "education": [
     {
-      "title": "Bachelor's in Computer Science",
+      "title": "Bachelor of Science in Electrical and Computer Engineering",
       "type": "Bachelor's",
-      "location": "National University of Singapore",
-      "period": "Aug 2021 – May 2025"
+      "location": "University of Engineering and Technology, Lahore",
+      "period": "Aug 2019 – Mar 2023"
     },
     {
-      "title": "GCE 'A' Levels",
-      "type": "Tertiary",
-      "location": "Hwa Chong Institution",
-      "period": "Jan 2017 – Oct 2018"
+      "title": "Intermediate in Pre-Engineering",
+      "type": "Higher Secondary",
+      "location": "Punjab Group of Colleges",
+      "period": "Mar 2017 – Mar 2019"
+    },
+    {
+      "title": "Matriculation in Science",
+      "type": "Secondary School",
+      "location": "Garrison Boys High School",
+      "period": "Mar 2015 – Mar 2017"
     }
   ]
 }
