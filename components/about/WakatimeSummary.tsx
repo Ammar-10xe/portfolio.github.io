@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { motion, useAnimation, useInView, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { FaTrophy, FaGraduationCap } from "react-icons/fa";
 
 // Create motion-enabled components for animation
 const MotionVStack = motion(VStack);
@@ -27,6 +28,22 @@ interface SkillBarProps {
   skill: string;
   level: number;
 }
+
+// Key achievements data
+const keyAchievements = [
+  {
+    title: "Gold Medal & High Achiever Award",
+    description: "Awarded the Gold Medal and prize money for outstanding performance at the LGES High Achiever Ceremony",
+    icon: FaTrophy,
+    iconColor: "yellow.400",
+  },
+  {
+    title: "Subject Matter Expert",
+    description: "Served as an SME for System Verilog verification and Intro to RISC-V Assembly & Computer Architecture courses, contributing to curriculum development and instruction at 10xE Training Department.",
+    icon: FaGraduationCap,
+    iconColor: "blue.400",
+  },
+];
 
 // A new, more interactive component for the skill progress bar
 const SkillBar = ({ skill, level }: SkillBarProps) => {
@@ -190,6 +207,17 @@ export default function WakatimeSummary() {
     show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
+  // Animation for achievement items
+  const achievementVariants = {
+    hidden: { opacity: 0, x: -20 },
+    show: { opacity: 1, x: 0 },
+    hover: {
+      y: -5,
+      boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)",
+      transition: { type: "spring", stiffness: 400, damping: 10 }
+    }
+  };
+
   return (
     <MotionVStack
       width="full"
@@ -201,6 +229,66 @@ export default function WakatimeSummary() {
       whileInView="show"
       viewport={{ once: true, amount: 0.1 }}
     >
+      {/* ===== NEW SECTION: Key Achievements ===== */}
+      <MotionVStack
+        variants={itemVariants}
+        spacing={{ base: "1rem", md: "1.5rem" }}
+        align="flex-start"
+        width="full"
+      >
+        <Heading as="h2" size="xl" variant="subPrimary">Key Achievements</Heading>
+        <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
+          Notable accomplishments and recognitions in my career
+        </Text>
+      </MotionVStack>
+      
+      <MotionBox
+        variants={containerVariants}
+        width="full"
+        maxW="4xl"
+        mx="auto"
+      >
+        <Grid
+          templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+          gap={{ base: 4, md: 6 }}
+        >
+          {keyAchievements.map((achievement, index) => (
+            <MotionBox
+              key={index}
+              variants={achievementVariants}
+              whileHover="hover"
+              bg={cardBg}
+              p={{ base: 4, md: 6 }}
+              borderRadius="xl"
+              boxShadow="md"
+              border="1px solid"
+              borderColor={borderColor}
+              style={{ transition: "all 0.3s ease" }}
+            >
+              <HStack spacing={4} align="flex-start">
+                <Box
+                  p={3}
+                  bg={`${achievement.iconColor}.100`}
+                  borderRadius="full"
+                  color={achievement.iconColor}
+                  fontSize="xl"
+                >
+                  <achievement.icon size="1.5em" />
+                </Box>
+                <VStack align="flex-start" spacing={2}>
+                  <Heading as="h3" size="md" color={achievement.iconColor}>
+                    {achievement.title}
+                  </Heading>
+                  <Text fontSize={{ base: "sm", md: "md" }}>
+                    {achievement.description}
+                  </Text>
+                </VStack>
+              </HStack>
+            </MotionBox>
+          ))}
+        </Grid>
+      </MotionBox>
+
       {/* ===== SECTION 1: Programming Languages ===== */}
       <MotionVStack
         variants={itemVariants}
@@ -269,7 +357,7 @@ export default function WakatimeSummary() {
                 color={activeTab === index ? "white" : "gray.500"}
                 bg={activeTab === index ? iconColor : "transparent"}
                 borderRadius="lg"
-                transition="all 0.3s ease"
+                style={{ transition: "all 0.3s ease" }}
                 _hover={{
                   bg: activeTab === index ? iconColor : hoverBg,
                   color: activeTab === index ? "white" : iconColor,
