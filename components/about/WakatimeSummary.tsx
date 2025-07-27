@@ -3,42 +3,71 @@ import {
   Text,
   VStack,
   Stack,
-  Wrap,
-  WrapItem,
-  Tag,
   useColorModeValue,
   Box,
   Divider,
+  Grid,
+  HStack,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 // Create motion-enabled components for animation
 const MotionStack = motion(Stack);
 const MotionVStack = motion(VStack);
-const MotionWrap = motion(Wrap);
-const MotionTag = motion(Tag);
 const MotionBox = motion(Box);
 
-// Group skills into categories for a more organized presentation
-const skillGroups = [
-  {
-    title: "Languages & Methodologies",
-    skills: ["SystemVerilog", "UVM", "C/Python", "SV Assertions"],
-  },
-  {
-    title: "Architectures & Protocols",
-    skills: ["RISC-V", "AMBA (AXI, AHB, APB)"],
-  },
-  {
-    title: "Tools & Platforms",
-    skills: ["QuestaSim / VCS", "Git / GitLab", "JIRA", "Verdi"],
-  },
+// CORRECTED: Added a type interface for the component's props
+interface SkillBarProps {
+  skill: string;
+  level: number;
+}
+
+// A new component for the skill progress bar
+const SkillBar = ({ skill, level }: SkillBarProps) => {
+  const barColor = useColorModeValue("teal.500", "cyan.400");
+  const bgColor = useColorModeValue("gray.200", "gray.700");
+
+  const barVariants = {
+    hidden: { width: 0 },
+    show: { 
+      width: `${level}%`,
+      transition: { duration: 1, ease: "easeOut" }
+    },
+  };
+
+  return (
+    <VStack align="flex-start" w="full" spacing={1}>
+      <HStack w="full" justify="space-between">
+        <Text fontWeight="medium">{skill}</Text>
+        <Text color="gray.500" fontSize="sm">{level}%</Text>
+      </HStack>
+      <Box w="full" h="6px" bg={bgColor} borderRadius="full" overflow="hidden">
+        <MotionBox
+          h="6px"
+          bg={barColor}
+          borderRadius="full"
+          variants={barVariants}
+        />
+      </Box>
+    </VStack>
+  );
+};
+
+// Skills with assigned expertise levels
+const skillsWithExpertise = [
+  { name: "SystemVerilog", level: 95 },
+  { name: "UVM", level: 90 },
+  { name: "RISC-V", level: 90 },
+  { name: "Assembly", level: 80 },
+  { name: "C / Python", level: 85 },
+  { name: "AMBA Protocols", level: 85 },
+  { name: "SV Assertions", level: 80 },
+  { name: "QuestaSim / VCS", level: 80 },
+  { name: "Git / GitLab", level: 75 },
 ];
 
 export default function WakatimeSummary() {
-  const tagColor = useColorModeValue("teal", "cyan");
   const gradientColor = useColorModeValue("teal.500", "cyan.500");
-  const headingColor = useColorModeValue("gray.600", "gray.400");
 
   // Animation variants for the main container
   const containerVariants = {
@@ -46,7 +75,7 @@ export default function WakatimeSummary() {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
+        staggerChildren: 0.1,
       },
     },
   };
@@ -61,7 +90,7 @@ export default function WakatimeSummary() {
     <MotionStack
       width="full"
       direction={{ base: "column", lg: "row" }}
-      alignItems="flex-start" // Align items to the top
+      alignItems="center"
       justifyContent="center"
       spacing={{ base: "3rem", lg: "5rem" }}
       py="4rem"
@@ -77,48 +106,36 @@ export default function WakatimeSummary() {
         align={{ base: "center", lg: "flex-start" }}
         textAlign={{ base: "center", lg: "left" }}
         flex="1"
+        maxW="lg"
       >
         <Heading as="h2" size="xl" variant="subPrimary">Languages & Tools 🛠️</Heading>
         <Divider borderColor={gradientColor} width="50px" borderWidth="2px" />
         <Text
           variant="descriptor"
           fontSize={{ base: "lg", md: "xl" }}
-          maxW="lg"
         >
-          I specialize in verification using a modern toolset. Here are some of the key technologies I work with, organized by category.
+          I have a strong command of the essential languages, methodologies, and tools required for modern design verification.
         </Text>
       </MotionVStack>
 
-      {/* ===== Right Column: Grouped Skills ===== */}
+      {/* ===== Right Column: Skill Bars ===== */}
       <MotionVStack
-        variants={itemVariants}
+        variants={containerVariants} // Use container variants to stagger the children
         flex="1.5"
-        spacing={8}
-        align="flex-start"
+        spacing={6}
         width="full"
       >
-        {skillGroups.map((group) => (
-          <MotionVStack key={group.title} align="flex-start" width="full" variants={itemVariants}>
-            <Heading as="h3" size="md" color={headingColor}>
-              {group.title}
-            </Heading>
-            <MotionWrap spacing="10px">
-              {group.skills.map((skill) => (
-                <WrapItem key={skill}>
-                  <MotionTag 
-                    size="lg" 
-                    variant="solid" 
-                    colorScheme={tagColor}
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    {skill}
-                  </MotionTag>
-                </WrapItem>
-              ))}
-            </MotionWrap>
-          </MotionVStack>
-        ))}
+        <Grid 
+          templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} 
+          gap={{ base: 6, md: 8 }}
+          width="full"
+        >
+          {skillsWithExpertise.map((skillItem) => (
+            <MotionBox key={skillItem.name} variants={itemVariants}>
+              <SkillBar skill={skillItem.name} level={skillItem.level} />
+            </MotionBox>
+          ))}
+        </Grid>
       </MotionVStack>
     </MotionStack>
   );
