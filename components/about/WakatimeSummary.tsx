@@ -8,9 +8,10 @@ import {
   HStack,
   Icon,
   IconProps,
+  Button,
 } from "@chakra-ui/react";
-import { motion, useAnimation, useInView, useSpring, useTransform } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { motion, useAnimation, useInView, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 // Create motion-enabled components for animation
 const MotionVStack = motion(VStack);
@@ -109,20 +110,32 @@ const languageSkills = [
   { name: "Assembly", level: 80 },
 ];
 
-// Other technical skills from your resume for the tag box
-const technicalSkills = [
-  "Functional Coverage",
-  "Constrained Random Testing",
-  "IP/SoC Verification",
-  "Testbench Architecture",
-  "System Verilog Assertions",
-  "Debugging",
-  "Regression Testing",
-  "DV Methodologies",
-  "Testplan Development",
-  "Git/GitLab",
-  "AMBA(AXI, AHB, APB)",
-  "SPIKE/SAIL",
+// Grouped technical skills for the new Tab layout
+const skillGroups = [
+  {
+    category: "Verification & Methodologies",
+    skills: [
+      "Functional Coverage",
+      "Constrained Random Testing",
+      "System Verilog Assertions",
+      "Testplan Development",
+      "Debugging",
+      "Regression Testing",
+    ],
+  },
+
+  {
+    category: "Tools",
+    skills: ["QuestaSim", "Synopsys VCS", "Xilinx Vivado", "GTKwave/Verdi", "Confluence/JIRA", "SPIKE/SAIL"],
+  },
+  {
+  category: "Protocols",
+  skills: [
+    "AMBA(AXI, AHB, APB)",
+    "AMBA ACE 5-Lite",
+    "AMBA LTI/DTI-ATS",
+  ],
+  },
 ];
 
 // A simple checkmark icon for the list
@@ -137,8 +150,8 @@ const CheckIcon = (props: IconProps) => (
 
 export default function WakatimeSummary() {
   const iconColor = useColorModeValue("teal.500", "cyan.400");
-  // CORRECTED: Called useColorModeValue at the top level of the component
   const hoverBg = useColorModeValue("gray.100", "gray.700");
+  const [activeTab, setActiveTab] = useState(0);
 
   // Animation variants for the main container
   const containerVariants = {
@@ -177,7 +190,7 @@ export default function WakatimeSummary() {
       >
         <Heading as="h2" size="xl" variant="subPrimary">Programming Languages</Heading>
         <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
-          My proficiency in core verification language
+          My proficiency in core verification languages.
         </Text>
       </MotionVStack>
       <MotionVStack variants={containerVariants} spacing={4} width="full" align="center">
@@ -205,35 +218,77 @@ export default function WakatimeSummary() {
       >
         <Heading as="h2" size="xl" variant="subPrimary">Technical Skills</Heading>
         <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
-          A broader look at my capabilities in the verification domain
+          A broader look at my capabilities in the verification domain.
         </Text>
       </MotionVStack>
 
+      {/* EDITED: Replaced the Accordion with an interactive Tab layout */}
       <MotionVStack variants={itemVariants} align="center" justify="center" w="full">
-        <Grid
-          templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-          gap={4}
-          width="full"
-          maxW="4xl"
-        >
-          {technicalSkills.map((skill) => (
-            <MotionHStack
-              key={skill}
-              p={3}
-              borderRadius="lg"
-              spacing={4}
-              whileHover={{
-                // CORRECTED: Used the variable here instead of calling the hook
-                backgroundColor: hoverBg,
-                scale: 1.05,
-              }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <CheckIcon color={iconColor} w={6} h={6} />
-              <Text fontWeight="medium">{skill}</Text>
-            </MotionHStack>
-          ))}
-        </Grid>
+        <VStack align="stretch" width="full" maxW="4xl" spacing={5}>
+          {/* Tab Buttons */}
+          <HStack spacing={4} borderBottom="2px solid" borderColor={useColorModeValue("gray.200", "gray.700")}>
+            {skillGroups.map((group, index) => (
+              <Button
+                key={group.category}
+                variant="ghost"
+                onClick={() => setActiveTab(index)}
+                isActive={activeTab === index}
+                position="relative"
+                color={activeTab === index ? iconColor : "inherit"}
+                _active={{ bg: "transparent" }}
+                _after={{
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-2px',
+                  left: 0,
+                  right: 0,
+                  height: '2px',
+                  bg: iconColor,
+                  transform: activeTab === index ? 'scaleX(1)' : 'scaleX(0)',
+                  transition: 'transform 0.3s ease-in-out',
+                }}
+              >
+                {group.category}
+              </Button>
+            ))}
+          </HStack>
+
+          {/* Tab Content */}
+          <Box p={4} minH="200px">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -10, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Grid
+                  templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+                  gap={4}
+                >
+                  {skillGroups[activeTab].skills.map((skill) => (
+                    <MotionHStack
+                      key={skill}
+                      p={3}
+                      spacing={4}
+                      whileHover={{
+                        backgroundColor: hoverBg,
+                        scale: 1.02,
+                        x: 5,
+                      }}
+                      borderRadius="md"
+                      transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                    >
+                      <CheckIcon color={iconColor} w={5} h={5} flexShrink={0} />
+                      <Text fontWeight="medium">{skill}</Text>
+                    </MotionHStack>
+                  ))}
+                </Grid>
+              </motion.div>
+            </AnimatePresence>
+          </Box>
+        </VStack>
       </MotionVStack>
     </MotionVStack>
   );
