@@ -2,7 +2,7 @@ import {
   Button,
   Divider,
   HStack,
-  Image,
+  Icon,
   LinkBox,
   LinkOverlay,
   Text,
@@ -10,23 +10,17 @@ import {
   useColorModeValue,
   useMediaQuery,
 } from "@chakra-ui/react";
+import { FaWhatsapp, FaGithub, FaLinkedin } from "react-icons/fa";
 import Logo from "./Logo";
 import profile from "@/data/profile.json";
 import ColorModeButton from "./ColorModeButton";
 import InternalLink from "./InternalLink";
 
-const { github, linkedIn } = profile.socialMedia;
+const { github, whatsapp, linkedIn } = profile.socialMedia;
 
 export default function Navbar() {
   const primaryColor = useColorModeValue("gray.3", "gray.4");
-  const githubImage = useColorModeValue(
-    "/images/social-media/github-light.svg",
-    "/images/social-media/github-dark.svg"
-  );
-  const linkedInImage = useColorModeValue(
-    "/images/social-media/linkedin-light.svg",
-    "/images/social-media/linkedin-dark.svg"
-  );
+  const iconColor = useColorModeValue("gray.600", "gray.200");
   const [isMobile] = useMediaQuery("(max-width: 592px)");
 
   function headerLink(route: string, text: string) {
@@ -49,20 +43,13 @@ export default function Navbar() {
     );
   }
 
-  function socialMedia(route: string, image: string) {
+  function socialIcon(route: string, icon: any) {
     return (
       <LinkBox>
-        <Button
-          padding="0"
-          minW="1.5rem"
-          minH="1.5rem"
-          height="min"
-          bgColor="transparent"
-        >
-          <LinkOverlay href={route} isExternal={true}>
-            <Image
-              src={image}
-              alt="Social Media"
+        <Button padding="0" minW="1.5rem" minH="1.5rem" height="min" bgColor="transparent">
+          <LinkOverlay href={route} isExternal>
+            <Icon
+              as={icon}
               boxSize={{
                 base: "1.5rem",
                 sm: "1.6rem",
@@ -71,6 +58,7 @@ export default function Navbar() {
                 xl: "2rem",
                 "2xl": "2.25rem",
               }}
+              color={iconColor}
             />
           </LinkOverlay>
         </Button>
@@ -84,23 +72,16 @@ export default function Navbar() {
         <VStack width="full">
           <HStack width="full" justifyContent="space-between">
             <Logo />
-            <HStack
-              spacing={{
-                base: "0.75rem",
-                sm: "1rem",
-              }}
-            >
-              {socialMedia(github, githubImage)}
-              {socialMedia(linkedIn, linkedInImage)}
+            <HStack spacing={{ base: "0.75rem", sm: "1rem" }}>
+              {socialIcon(github, FaGithub)}
+              {socialIcon(whatsapp, FaWhatsapp)}
+              {socialIcon(linkedIn, FaLinkedin)}
               <ColorModeButton />
             </HStack>
           </HStack>
           <Divider />
           <HStack
-            width={{
-              base: "full",
-              sm: "80vw",
-            }}
+            width={{ base: "full", sm: "80vw" }}
             alignSelf="center"
             justifyContent="space-around"
           >
@@ -122,7 +103,7 @@ export default function Navbar() {
               md: "1rem",
               lg: "2rem",
               xl: "3rem",
-              "2xl": "4rem"
+              "2xl": "4rem",
             }}
           >
             {headerLink("/", "Home")}
@@ -138,8 +119,9 @@ export default function Navbar() {
                 "2xl": "1.25rem",
               }}
             >
-              {socialMedia(github, githubImage)}
-              {socialMedia(linkedIn, linkedInImage)}
+              {socialIcon(whatsapp, FaWhatsapp)}
+              {socialIcon(github, FaGithub)}
+              {socialIcon(linkedIn, FaLinkedin)}
               <ColorModeButton />
             </HStack>
           </HStack>
