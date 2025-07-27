@@ -6,20 +6,17 @@ import {
   Box,
   Grid,
   HStack,
-  Wrap,
-  WrapItem,
-  Tag,
+  Icon,
+  IconProps,
 } from "@chakra-ui/react";
 import { motion, useAnimation, useInView, useSpring, useTransform } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 // Create motion-enabled components for animation
 const MotionVStack = motion(VStack);
 const MotionBox = motion(Box);
 const MotionText = motion(Text);
-const MotionTag = motion(Tag);
-const MotionWrap = motion(Wrap);
-const MotionWrapItem = motion(WrapItem);
+const MotionHStack = motion(HStack);
 
 // Type interface for the component's props
 interface SkillBarProps {
@@ -118,34 +115,30 @@ const technicalSkills = [
   "Constrained Random Testing",
   "IP/SoC Verification",
   "Testbench Architecture",
-  "RTL Design",
+  "System Verilog Assertions",
   "Debugging",
   "Regression Testing",
   "DV Methodologies",
+  "Testplan Development",
+  "Git/GitLab",
+  "AMBA(AXI, AHB, APB)",
+  "SPIKE/SAIL",
 ];
 
-// CORRECTED: Moved colorPalette outside the component to make it a true constant
-const colorPalette = ["teal", "cyan", "purple", "orange", "pink", "blue", "green", "red"];
+// A simple checkmark icon for the list
+const CheckIcon = (props: IconProps) => (
+  <Icon viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="M12,0A12,12,0,1,0,24,12,12.014,12.014,0,0,0,12,0Zm6.927,8.2-6.845,9.289a1.011,1.011,0,0,1-1.43.188L5.764,13.769a1,1,0,1,1,1.25-1.562l4.076,3.261,6.227-8.451A1,1,0,1,1,18.927,8.2Z"
+    />
+  </Icon>
+);
 
 export default function WakatimeSummary() {
-  // Logic for dynamic tag colors
-  const [tagColors, setTagColors] = useState<string[]>([]);
-
-  useEffect(() => {
-    // CORRECTED: Added type 'string[]' to the 'array' parameter to fix the TypeScript error
-    const shuffle = (array: string[]) => [...array].sort(() => Math.random() - 0.5);
-    
-    // Set initial colors
-    setTagColors(shuffle(colorPalette));
-
-    // Set an interval to reshuffle colors every few seconds
-    const interval = setInterval(() => {
-      setTagColors(shuffle(colorPalette));
-    }, 2000); // Change colors every 2 seconds
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
-  }, []); // CORRECTED: The dependency array is now correct as colorPalette is defined outside
+  const iconColor = useColorModeValue("teal.500", "cyan.400");
+  // CORRECTED: Called useColorModeValue at the top level of the component
+  const hoverBg = useColorModeValue("gray.100", "gray.700");
 
   // Animation variants for the main container
   const containerVariants = {
@@ -184,7 +177,7 @@ export default function WakatimeSummary() {
       >
         <Heading as="h2" size="xl" variant="subPrimary">Programming Languages</Heading>
         <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
-          My proficiency in core verification languages.
+          My proficiency in core verification language
         </Text>
       </MotionVStack>
       <MotionVStack variants={containerVariants} spacing={4} width="full" align="center">
@@ -212,30 +205,36 @@ export default function WakatimeSummary() {
       >
         <Heading as="h2" size="xl" variant="subPrimary">Technical Skills</Heading>
         <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
-          A broader look at my capabilities in the verification domain.
+          A broader look at my capabilities in the verification domain
         </Text>
       </MotionVStack>
 
-      <MotionWrap
-        variants={containerVariants}
-        spacing="15px"
-        justify="center"
-        p={{ base: 2, md: 4 }}
-      >
-        {technicalSkills.map((skill, index) => (
-          <MotionWrapItem key={skill} variants={itemVariants}>
-            <MotionTag
-              size="lg"
-              variant="subtle"
-              colorScheme={tagColors[index % tagColors.length] || "gray"}
-              whileHover={{ scale: 1.1, y: -2, boxShadow: 'lg' }}
-              transition={{ type: 'spring', stiffness: 300 }}
+      <MotionVStack variants={itemVariants} align="center" justify="center" w="full">
+        <Grid
+          templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+          gap={4}
+          width="full"
+          maxW="4xl"
+        >
+          {technicalSkills.map((skill) => (
+            <MotionHStack
+              key={skill}
+              p={3}
+              borderRadius="lg"
+              spacing={4}
+              whileHover={{
+                // CORRECTED: Used the variable here instead of calling the hook
+                backgroundColor: hoverBg,
+                scale: 1.05,
+              }}
+              transition={{ type: "spring", stiffness: 300 }}
             >
-              {skill}
-            </MotionTag>
-          </MotionWrapItem>
-        ))}
-      </MotionWrap>
+              <CheckIcon color={iconColor} w={6} h={6} />
+              <Text fontWeight="medium">{skill}</Text>
+            </MotionHStack>
+          ))}
+        </Grid>
+      </MotionVStack>
     </MotionVStack>
   );
 }
