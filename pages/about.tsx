@@ -29,7 +29,7 @@ export default function About() {
         alignItems="left"
       >
         <ExperienceSummary />
-        <TechStackSummary />
+        {/* <TechStackSummary /> */}
         <WakatimeSummary />
       </VStack>
     </main>
