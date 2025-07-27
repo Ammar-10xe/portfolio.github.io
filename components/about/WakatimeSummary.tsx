@@ -11,10 +11,12 @@ import {
   Button,
   Flex,
   Badge,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { motion, useAnimation, useInView, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { FaTrophy, FaGraduationCap } from "react-icons/fa";
+import { FaTrophy, FaGraduationCap, FaStar, FaGlobeAmericas } from "react-icons/fa";
+import { FiAward, FiUsers } from "react-icons/fi";
 
 // Create motion-enabled components for animation
 const MotionVStack = motion(VStack);
@@ -36,12 +38,28 @@ const keyAchievements = [
     description: "Awarded the Gold Medal and prize money for outstanding performance at the LGES High Achiever Ceremony",
     icon: FaTrophy,
     iconColor: "yellow.400",
+    stats: null,
   },
   {
     title: "Subject Matter Expert",
     description: "Served as an SME for System Verilog verification and Intro to RISC-V Assembly & Computer Architecture courses, contributing to curriculum development and instruction at 10xE Training Department.",
     icon: FaGraduationCap,
     iconColor: "blue.400",
+    stats: null,
+  },
+  {
+    title: "Level 2 Seller on Fiverr",
+    description: "Managed up to 170+ projects on Fiverr and Upwork delivering high-quality work within tight deadlines",
+    icon: FaStar,
+    iconColor: "green.400",
+    stats: "170+ Projects",
+  },
+  {
+    title: "Computer Architecture Instructor",
+    description: "Taught a Computer Architecture course to five international students from different countries through the ULAAS Academy platform.",
+    icon: FaGlobeAmericas,
+    iconColor: "purple.400",
+    stats: "5 International Students",
   },
 ];
 
@@ -189,6 +207,8 @@ export default function WakatimeSummary() {
   const cardBg = useColorModeValue("white", "gray.900");
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const [activeTab, setActiveTab] = useState(0);
+  const [hoveredAchievement, setHoveredAchievement] = useState<number | null>(null);
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   // Animation variants for the main container
   const containerVariants = {
@@ -209,13 +229,28 @@ export default function WakatimeSummary() {
 
   // Animation for achievement items
   const achievementVariants = {
-    hidden: { opacity: 0, x: -20 },
-    show: { opacity: 1, x: 0 },
+    hidden: { opacity: 0, scale: 0.9 },
+    show: (i: number) => ({
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delay: i * 0.1,
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }
+    }),
     hover: {
-      y: -5,
-      boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)",
+      y: -10,
+      boxShadow: "0 15px 30px rgba(0, 0, 0, 0.15)",
       transition: { type: "spring", stiffness: 400, damping: 10 }
     }
+  };
+
+  // Animation for achievement icon
+  const iconVariants = {
+    normal: { scale: 1 },
+    hover: { scale: 1.2, rotate: 10 }
   };
 
   return (
@@ -229,7 +264,7 @@ export default function WakatimeSummary() {
       whileInView="show"
       viewport={{ once: true, amount: 0.1 }}
     >
-      {/* ===== NEW SECTION: Key Achievements ===== */}
+      {/* ===== ENHANCED SECTION: Key Achievements ===== */}
       <MotionVStack
         variants={itemVariants}
         spacing={{ base: "1rem", md: "1.5rem" }}
@@ -245,7 +280,7 @@ export default function WakatimeSummary() {
       <MotionBox
         variants={containerVariants}
         width="full"
-        maxW="4xl"
+        maxW="6xl"
         mx="auto"
       >
         <Grid
@@ -255,26 +290,46 @@ export default function WakatimeSummary() {
           {keyAchievements.map((achievement, index) => (
             <MotionBox
               key={index}
+              custom={index}
               variants={achievementVariants}
+              initial="hidden"
+              animate="show"
               whileHover="hover"
+              onHoverStart={() => setHoveredAchievement(index)}
+              onHoverEnd={() => setHoveredAchievement(null)}
               bg={cardBg}
               p={{ base: 4, md: 6 }}
               borderRadius="xl"
               boxShadow="md"
               border="1px solid"
               borderColor={borderColor}
-              style={{ transition: "all 0.3s ease" }}
+              position="relative"
+              overflow="hidden"
+              _before={{
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                bg: `${achievement.iconColor}`,
+                transform: hoveredAchievement === index ? 'scaleX(1)' : 'scaleX(0.2)',
+                transformOrigin: 'left',
+                transition: 'transform 0.3s ease',
+              }}
             >
               <HStack spacing={4} align="flex-start">
-                <Box
+                <MotionBox
                   p={3}
                   bg={`${achievement.iconColor}.100`}
                   borderRadius="full"
                   color={achievement.iconColor}
                   fontSize="xl"
+                  variants={iconVariants}
+                  animate={hoveredAchievement === index ? "hover" : "normal"}
                 >
                   <achievement.icon size="1.5em" />
-                </Box>
+                </MotionBox>
                 <VStack align="flex-start" spacing={2}>
                   <Heading as="h3" size="md" color={achievement.iconColor}>
                     {achievement.title}
@@ -282,8 +337,36 @@ export default function WakatimeSummary() {
                   <Text fontSize={{ base: "sm", md: "md" }}>
                     {achievement.description}
                   </Text>
+                  {achievement.stats && (
+                    <Badge
+                      mt={2}
+                      colorScheme={achievement.iconColor.split(".")[0]}
+                      variant="subtle"
+                      px={2}
+                      py={1}
+                      borderRadius="md"
+                    >
+                      {achievement.stats}
+                    </Badge>
+                  )}
                 </VStack>
               </HStack>
+              <MotionBox
+                position="absolute"
+                bottom={0}
+                right={0}
+                width="100px"
+                height="100px"
+                bg={`${achievement.iconColor}.100`}
+                opacity={0.1}
+                borderRadius="full"
+                style={{
+                  x: hoveredAchievement === index ? 20 : 50,
+                  y: hoveredAchievement === index ? 20 : 50,
+                  scale: hoveredAchievement === index ? 1.5 : 1,
+                }}
+                transition={{ type: "spring", stiffness: 100, damping: 10 }}
+              />
             </MotionBox>
           ))}
         </Grid>
