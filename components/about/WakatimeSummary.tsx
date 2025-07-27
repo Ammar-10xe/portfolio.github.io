@@ -11,13 +11,15 @@ import {
   Tag,
 } from "@chakra-ui/react";
 import { motion, useAnimation, useInView, useSpring, useTransform } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Create motion-enabled components for animation
 const MotionVStack = motion(VStack);
 const MotionBox = motion(Box);
 const MotionText = motion(Text);
 const MotionTag = motion(Tag);
+const MotionWrap = motion(Wrap);
+const MotionWrapItem = motion(WrapItem);
 
 // Type interface for the component's props
 interface SkillBarProps {
@@ -122,8 +124,28 @@ const technicalSkills = [
   "DV Methodologies",
 ];
 
+// CORRECTED: Moved colorPalette outside the component to make it a true constant
+const colorPalette = ["teal", "cyan", "purple", "orange", "pink", "blue", "green", "red"];
+
 export default function WakatimeSummary() {
-  const tagColor = useColorModeValue("gray", "gray");
+  // Logic for dynamic tag colors
+  const [tagColors, setTagColors] = useState<string[]>([]);
+
+  useEffect(() => {
+    // CORRECTED: Added type 'string[]' to the 'array' parameter to fix the TypeScript error
+    const shuffle = (array: string[]) => [...array].sort(() => Math.random() - 0.5);
+    
+    // Set initial colors
+    setTagColors(shuffle(colorPalette));
+
+    // Set an interval to reshuffle colors every few seconds
+    const interval = setInterval(() => {
+      setTagColors(shuffle(colorPalette));
+    }, 2000); // Change colors every 2 seconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []); // CORRECTED: The dependency array is now correct as colorPalette is defined outside
 
   // Animation variants for the main container
   const containerVariants = {
@@ -147,7 +169,7 @@ export default function WakatimeSummary() {
       width="full"
       align="stretch"
       spacing={{ base: "3rem", md: "4rem" }}
-      pb="4rem" // EDITED: Changed from py="4rem" to remove top padding
+      pb="4rem"
       variants={containerVariants}
       initial="hidden"
       whileInView="show"
@@ -186,29 +208,34 @@ export default function WakatimeSummary() {
         spacing={{ base: "1rem", md: "1.5rem" }}
         align="flex-start"
         width="full"
-        pt="2rem" // Add some space above the new section
+        pt="2rem"
       >
         <Heading as="h2" size="xl" variant="subPrimary">Technical Skills</Heading>
         <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
           A broader look at my capabilities in the verification domain.
         </Text>
       </MotionVStack>
-      <MotionBox variants={itemVariants} p={6} borderWidth="1px" borderRadius="xl">
-        <Wrap spacing="15px" justify="center">
-          {technicalSkills.map((skill) => (
-            <WrapItem key={skill}>
-              <MotionTag
-                size="lg"
-                variant="solid"
-                colorScheme={tagColor}
-                whileHover={{ scale: 1.1 }}
-              >
-                {skill}
-              </MotionTag>
-            </WrapItem>
-          ))}
-        </Wrap>
-      </MotionBox>
+
+      <MotionWrap
+        variants={containerVariants}
+        spacing="15px"
+        justify="center"
+        p={{ base: 2, md: 4 }}
+      >
+        {technicalSkills.map((skill, index) => (
+          <MotionWrapItem key={skill} variants={itemVariants}>
+            <MotionTag
+              size="lg"
+              variant="subtle"
+              colorScheme={tagColors[index % tagColors.length] || "gray"}
+              whileHover={{ scale: 1.1, y: -2, boxShadow: 'lg' }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
+              {skill}
+            </MotionTag>
+          </MotionWrapItem>
+        ))}
+      </MotionWrap>
     </MotionVStack>
   );
 }
