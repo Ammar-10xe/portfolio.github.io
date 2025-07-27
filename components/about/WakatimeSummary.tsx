@@ -110,10 +110,10 @@ const languageSkills = [
   { name: "Assembly", level: 80 },
 ];
 
-// Grouped technical skills for the new Tab layout
+// EDITED: Shortened category names for better mobile display
 const skillGroups = [
-  {
-    category: "Verification Methodologies & Techniques",
+    {
+    category: "DV Methodologies",
     skills: [
       "Functional Coverage Modeling",
       "Constrained Random Verification (CRV)",
@@ -126,9 +126,8 @@ const skillGroups = [
       "UVM-based Testbench Architecture",
     ],
   },
-
   {
-    category: "Tools, Simulators & Environments",
+    category: "Tools & Environments",
     skills: [
       "Mentor QuestaSim / ModelSim",
       "Synopsys VCS",
@@ -140,9 +139,8 @@ const skillGroups = [
       "Git / GitLab",
     ],
   },
-
   {
-    category: "Protocols, Buses & Standards",
+    category: "Protocols & Standards",
     skills: [
       "AMBA AXI4 / AHB / APB",
       "AMBA ACE 5-Lite",
@@ -239,11 +237,17 @@ export default function WakatimeSummary() {
         </Text>
       </MotionVStack>
 
-      {/* EDITED: Replaced the Accordion with an interactive Tab layout */}
       <MotionVStack variants={itemVariants} align="center" justify="center" w="full">
         <VStack align="stretch" width="full" maxW="4xl" spacing={5}>
           {/* Tab Buttons */}
-          <HStack spacing={4} borderBottom="2px solid" borderColor={useColorModeValue("gray.200", "gray.700")}>
+          <HStack 
+            as="nav"
+            spacing={{ base: 2, md: 4 }} 
+            borderBottom="2px solid" 
+            borderColor={useColorModeValue("gray.200", "gray.700")}
+            flexWrap="wrap" // Allow buttons to wrap on smaller screens
+            justify="flex-start" // Align wrapped items to the start
+          >
             {skillGroups.map((group, index) => (
               <Button
                 key={group.category}
@@ -264,6 +268,9 @@ export default function WakatimeSummary() {
                   transform: activeTab === index ? 'scaleX(1)' : 'scaleX(0)',
                   transition: 'transform 0.3s ease-in-out',
                 }}
+                mb={{ base: 2, md: 0 }}
+                // EDITED: Added responsive font size
+                fontSize={{ base: "sm", md: "md" }}
               >
                 {group.category}
               </Button>
@@ -271,7 +278,7 @@ export default function WakatimeSummary() {
           </HStack>
 
           {/* Tab Content */}
-          <Box p={4} minH="200px">
+          <Box p={4} minH={{ base: "320px", md: "200px" }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
