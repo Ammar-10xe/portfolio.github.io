@@ -113,28 +113,45 @@ const languageSkills = [
 // Grouped technical skills for the new Tab layout
 const skillGroups = [
   {
-    category: "Verification & Methodologies",
+    category: "Verification Methodologies & Techniques",
     skills: [
-      "Functional Coverage",
-      "Constrained Random Testing",
-      "System Verilog Assertions",
-      "Testplan Development",
-      "Debugging",
-      "Regression Testing",
+      "Functional Coverage Modeling",
+      "Constrained Random Verification (CRV)",
+      "SystemVerilog Assertions (SVA)",
+      "Testplan Creation & Traceability",
+      "Waveform Debugging & Root Cause Analysis",
+      "Regression Strategy & Management",
+      "Assertion-Based Verification (ABV)",
+      "Scoreboarding & Reference Modeling",
+      "UVM-based Testbench Architecture",
     ],
   },
 
   {
-    category: "Tools",
-    skills: ["QuestaSim", "Synopsys VCS", "Xilinx Vivado", "GTKwave/Verdi", "Confluence/JIRA", "SPIKE/SAIL"],
+    category: "Tools, Simulators & Environments",
+    skills: [
+      "Mentor QuestaSim / ModelSim",
+      "Synopsys VCS",
+      "Xilinx Vivado",
+      "GTKwave, Verdi, DVE",
+      "JIRA, Confluence",
+      "RISC-V SPIKE, SAIL, QEMU",
+      "Makefile, Shell Scripting",
+      "Git / GitLab",
+    ],
   },
+
   {
-  category: "Protocols",
-  skills: [
-    "AMBA(AXI, AHB, APB)",
-    "AMBA ACE 5-Lite",
-    "AMBA LTI/DTI-ATS",
-  ],
+    category: "Protocols, Buses & Standards",
+    skills: [
+      "AMBA AXI4 / AHB / APB",
+      "AMBA ACE 5-Lite",
+      "LTI/DTI-ATS Coherency Extensions",
+      "I2C / SPI / UART",
+      "RISC-V Privileged ISA",
+      "PCIe (Gen3/4) Familiarity",
+      "Interrupt & MSI Handling",
+    ],
   },
 ];
 
@@ -190,7 +207,7 @@ export default function WakatimeSummary() {
       >
         <Heading as="h2" size="xl" variant="subPrimary">Programming Languages</Heading>
         <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
-          My proficiency in core verification languages.
+          My proficiency in core verification languages
         </Text>
       </MotionVStack>
       <MotionVStack variants={containerVariants} spacing={4} width="full" align="center">
@@ -218,7 +235,7 @@ export default function WakatimeSummary() {
       >
         <Heading as="h2" size="xl" variant="subPrimary">Technical Skills</Heading>
         <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
-          A broader look at my capabilities in the verification domain.
+          A broader look at my capabilities in the verification domain
         </Text>
       </MotionVStack>
 
