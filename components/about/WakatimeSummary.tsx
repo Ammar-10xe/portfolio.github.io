@@ -2,72 +2,129 @@ import {
   Heading,
   Text,
   VStack,
-  Stack,
   useColorModeValue,
   Box,
-  Divider,
   Grid,
   HStack,
+  Wrap,
+  WrapItem,
+  Tag,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
+import { motion, useAnimation, useInView, useSpring, useTransform } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 // Create motion-enabled components for animation
-const MotionStack = motion(Stack);
 const MotionVStack = motion(VStack);
 const MotionBox = motion(Box);
+const MotionText = motion(Text);
+const MotionTag = motion(Tag);
 
-// CORRECTED: Added a type interface for the component's props
+// Type interface for the component's props
 interface SkillBarProps {
   skill: string;
   level: number;
 }
 
-// A new component for the skill progress bar
+// A new, more interactive component for the skill progress bar
 const SkillBar = ({ skill, level }: SkillBarProps) => {
   const barColor = useColorModeValue("teal.500", "cyan.400");
   const bgColor = useColorModeValue("gray.200", "gray.700");
+  
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const controls = useAnimation();
 
-  const barVariants = {
-    hidden: { width: 0 },
-    show: { 
+  // Spring animation for the percentage number
+  const animatedLevel = useSpring(0, { stiffness: 100, damping: 30 });
+  const roundedLevel = useTransform(animatedLevel, (latest) => Math.round(latest));
+
+  // This effect triggers all animations when the component scrolls into view
+  useEffect(() => {
+    if (isInView) {
+      controls.start({
+        width: `${level}%`,
+        transition: { type: "spring", stiffness: 50, damping: 20 },
+      });
+      animatedLevel.set(level);
+    }
+  }, [isInView, controls, level, animatedLevel]);
+
+  // This function handles the click event to re-run the animations
+  const handleClick = async () => {
+    // Reset animations
+    await controls.start({ width: "0%", transition: { duration: 0.3 } });
+    animatedLevel.set(0);
+
+    // Start animations again
+    controls.start({
       width: `${level}%`,
-      transition: { duration: 1, ease: "easeOut" }
-    },
+      transition: { type: "spring", stiffness: 50, damping: 20 },
+    });
+    animatedLevel.set(level);
   };
 
   return (
-    <VStack align="flex-start" w="full" spacing={1}>
+    <MotionVStack 
+      ref={ref}
+      align="flex-start" 
+      w="full" 
+      // spacing={1} 
+      onClick={handleClick}
+      cursor="pointer"
+      p={3}
+      borderRadius="lg"
+      // CORRECTED: Replaced the CSS string with a Framer Motion transition object
+      transition={{ duration: 0.2 }}
+      whileHover={{ 
+        scale: 1.03,
+        backgroundColor: useColorModeValue("gray.100", "gray.700"),
+      }}
+      whileTap={{ scale: 0.98 }}
+    >
       <HStack w="full" justify="space-between">
         <Text fontWeight="medium">{skill}</Text>
-        <Text color="gray.500" fontSize="sm">{level}%</Text>
+        <HStack>
+          <MotionText color="gray.500" fontSize="sm" fontWeight="bold">
+            {roundedLevel}
+          </MotionText>
+          <Text color="gray.500" fontSize="sm">%</Text>
+        </HStack>
       </HStack>
-      <Box w="full" h="6px" bg={bgColor} borderRadius="full" overflow="hidden">
+      <Box w="full" h="8px" bg={bgColor} borderRadius="full" overflow="hidden">
         <MotionBox
-          h="6px"
+          h="8px"
           bg={barColor}
           borderRadius="full"
-          variants={barVariants}
+          initial={{ width: 0 }}
+          animate={controls}
         />
       </Box>
-    </VStack>
+    </MotionVStack>
   );
 };
 
-// Skills with assigned expertise levels
-const skillsWithExpertise = [
+// Skills with assigned expertise levels for the progress bars
+const languageSkills = [
   { name: "SystemVerilog", level: 95 },
   { name: "UVM", level: 90 },
-  { name: "RISC-V", level: 90 },
-  { name: "Assembly", level: 80 },
   { name: "C / Python", level: 85 },
-  { name: "AMBA Protocols", level: 85 },
-  { name: "SV Assertions", level: 80 },
-  { name: "QuestaSim / VCS", level: 80 },
-  { name: "Git / GitLab", level: 75 },
+  { name: "Assembly", level: 80 },
+];
+
+// Other technical skills from your resume for the tag box
+const technicalSkills = [
+  "Functional Coverage",
+  "Constrained Random Testing",
+  "IP/SoC Verification",
+  "Testbench Architecture",
+  "RTL Design",
+  "Debugging",
+  "Regression Testing",
+  "DV Methodologies",
 ];
 
 export default function WakatimeSummary() {
-  const gradientColor = useColorModeValue("teal.500", "cyan.500");
+  const tagColor = useColorModeValue("gray", "gray");
 
   // Animation variants for the main container
   const containerVariants = {
@@ -87,56 +144,72 @@ export default function WakatimeSummary() {
   };
 
   return (
-    <MotionStack
+    <MotionVStack
       width="full"
-      direction={{ base: "column", lg: "row" }}
-      alignItems="center"
-      justifyContent="center"
-      spacing={{ base: "3rem", lg: "5rem" }}
+      align="stretch"
+      spacing={{ base: "3rem", md: "4rem" }}
       py="4rem"
       variants={containerVariants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.1 }}
     >
-      {/* ===== Left Column: Text Content ===== */}
+      {/* ===== SECTION 1: Programming Languages ===== */}
       <MotionVStack
         variants={itemVariants}
         spacing={{ base: "1rem", md: "1.5rem" }}
-        align={{ base: "center", lg: "flex-start" }}
-        textAlign={{ base: "center", lg: "left" }}
-        flex="1"
-        maxW="lg"
-      >
-        <Heading as="h2" size="xl" variant="subPrimary">Languages & Tools 🛠️</Heading>
-        <Divider borderColor={gradientColor} width="50px" borderWidth="2px" />
-        <Text
-          variant="descriptor"
-          fontSize={{ base: "lg", md: "xl" }}
-        >
-          I have a strong command of the essential languages, methodologies, and tools required for modern design verification.
-        </Text>
-      </MotionVStack>
-
-      {/* ===== Right Column: Skill Bars ===== */}
-      <MotionVStack
-        variants={containerVariants} // Use container variants to stagger the children
-        flex="1.5"
-        spacing={6}
+        align="flex-start"
         width="full"
       >
+        <Heading as="h2" size="xl" variant="subPrimary">Programming Languages</Heading>
+        <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
+          My proficiency in core verification languages.
+        </Text>
+      </MotionVStack>
+      <MotionVStack variants={containerVariants} spacing={4} width="full" align="center">
         <Grid 
           templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} 
-          gap={{ base: 6, md: 8 }}
+          gap={{ base: 4, md: 6 }}
           width="full"
+          maxW="4xl"
         >
-          {skillsWithExpertise.map((skillItem) => (
+          {languageSkills.map((skillItem) => (
             <MotionBox key={skillItem.name} variants={itemVariants}>
               <SkillBar skill={skillItem.name} level={skillItem.level} />
             </MotionBox>
           ))}
         </Grid>
       </MotionVStack>
-    </MotionStack>
+
+      {/* ===== SECTION 2: Technical Skills & Methodologies ===== */}
+      <MotionVStack
+        variants={itemVariants}
+        spacing={{ base: "1rem", md: "1.5rem" }}
+        align="flex-start"
+        width="full"
+        pt="2rem" // Add some space above the new section
+      >
+        <Heading as="h2" size="xl" variant="subPrimary">Technical Skills</Heading>
+        <Text variant="descriptor" fontSize={{ base: "lg", md: "xl" }}>
+          A broader look at my capabilities in the verification domain.
+        </Text>
+      </MotionVStack>
+      <MotionBox variants={itemVariants} p={6} borderWidth="1px" borderRadius="xl">
+        <Wrap spacing="15px" justify="center">
+          {technicalSkills.map((skill) => (
+            <WrapItem key={skill}>
+              <MotionTag
+                size="lg"
+                variant="solid"
+                colorScheme={tagColor}
+                whileHover={{ scale: 1.1 }}
+              >
+                {skill}
+              </MotionTag>
+            </WrapItem>
+          ))}
+        </Wrap>
+      </MotionBox>
+    </MotionVStack>
   );
 }
