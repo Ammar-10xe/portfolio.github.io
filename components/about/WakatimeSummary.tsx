@@ -9,6 +9,8 @@ import {
   Icon,
   IconProps,
   Button,
+  Flex,
+  Badge,
 } from "@chakra-ui/react";
 import { motion, useAnimation, useInView, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -18,6 +20,7 @@ const MotionVStack = motion(VStack);
 const MotionBox = motion(Box);
 const MotionText = motion(Text);
 const MotionHStack = motion(HStack);
+const MotionFlex = motion(Flex);
 
 // Type interface for the component's props
 interface SkillBarProps {
@@ -110,9 +113,9 @@ const languageSkills = [
   { name: "Assembly", level: 80 },
 ];
 
-// EDITED: Shortened category names for better mobile display
+// Skills categories
 const skillGroups = [
-    {
+  {
     category: "DV Methodologies",
     skills: [
       "Functional Coverage Modeling",
@@ -165,7 +168,9 @@ const CheckIcon = (props: IconProps) => (
 
 export default function WakatimeSummary() {
   const iconColor = useColorModeValue("teal.500", "cyan.400");
-  const hoverBg = useColorModeValue("gray.100", "gray.700");
+  const hoverBg = useColorModeValue("gray.50", "gray.800");
+  const cardBg = useColorModeValue("white", "gray.900");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
   const [activeTab, setActiveTab] = useState(0);
 
   // Animation variants for the main container
@@ -242,76 +247,103 @@ export default function WakatimeSummary() {
           {/* Tab Buttons */}
           <HStack 
             as="nav"
-            spacing={{ base: 2, md: 4 }} 
-            borderBottom="2px solid" 
-            borderColor={useColorModeValue("gray.200", "gray.700")}
-            flexWrap="wrap" // Allow buttons to wrap on smaller screens
-            justify="flex-start" // Align wrapped items to the start
+            spacing={{ base: 2, md: 4 }}
+            flexWrap="wrap"
+            justify="center"
+            bg={cardBg}
+            p={{ base: 2, md: 4 }}
+            borderRadius="xl"
+            boxShadow="sm"
+            border="1px solid"
+            borderColor={borderColor}
           >
             {skillGroups.map((group, index) => (
               <Button
                 key={group.category}
-                variant="ghost"
+                variant="unstyled"
                 onClick={() => setActiveTab(index)}
-                isActive={activeTab === index}
-                position="relative"
-                color={activeTab === index ? iconColor : "inherit"}
-                _active={{ bg: "transparent" }}
-                _after={{
-                  content: '""',
-                  position: 'absolute',
-                  bottom: '-2px',
-                  left: 0,
-                  right: 0,
-                  height: '2px',
-                  bg: iconColor,
-                  transform: activeTab === index ? 'scaleX(1)' : 'scaleX(0)',
-                  transition: 'transform 0.3s ease-in-out',
-                }}
-                mb={{ base: 2, md: 0 }}
-                // EDITED: Added responsive font size
+                px={{ base: 3, md: 4 }}
+                py={2}
                 fontSize={{ base: "sm", md: "md" }}
+                fontWeight="semibold"
+                color={activeTab === index ? "white" : "gray.500"}
+                bg={activeTab === index ? iconColor : "transparent"}
+                borderRadius="lg"
+                transition="all 0.3s ease"
+                _hover={{
+                  bg: activeTab === index ? iconColor : hoverBg,
+                  color: activeTab === index ? "white" : iconColor,
+                }}
+                display="flex"
+                alignItems="center"
+                gap={2}
               >
                 {group.category}
+                <Badge
+                  fontSize="0.7em"
+                  colorScheme={activeTab === index ? "whiteAlpha" : "gray"}
+                  variant="subtle"
+                >
+                  {group.skills.length}
+                </Badge>
               </Button>
             ))}
           </HStack>
 
           {/* Tab Content */}
-          <Box p={4} minH={{ base: "320px", md: "200px" }}>
+          <MotionBox
+            bg={cardBg}
+            p={{ base: 4, md: 6 }}
+            borderRadius="xl"
+            boxShadow="md"
+            border="1px solid"
+            borderColor={borderColor}
+            minH={{ base: "320px", md: "200px" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
-                initial={{ y: 10, opacity: 0 }}
+                initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -10, opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                exit={{ y: -20, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
               >
                 <Grid
-                  templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                  gap={4}
+                  templateColumns={{
+                    base: "1fr",
+                    md: "repeat(auto-fill, minmax(250px, 1fr))",
+                  }}
+                  gap={{ base: 3, md: 4 }}
                 >
                   {skillGroups[activeTab].skills.map((skill) => (
-                    <MotionHStack
+                    <MotionFlex
                       key={skill}
+                      align="center"
                       p={3}
-                      spacing={4}
-                      whileHover={{
-                        backgroundColor: hoverBg,
-                        scale: 1.02,
-                        x: 5,
-                      }}
+                      bg={hoverBg}
                       borderRadius="md"
+                      border="1px solid"
+                      borderColor={borderColor}
+                      whileHover={{
+                        scale: 1.02,
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                      }}
+                      whileTap={{ scale: 0.98 }}
                       transition={{ type: "spring", stiffness: 400, damping: 15 }}
                     >
-                      <CheckIcon color={iconColor} w={5} h={5} flexShrink={0} />
-                      <Text fontWeight="medium">{skill}</Text>
-                    </MotionHStack>
+                      <CheckIcon color={iconColor} w={5} h={5} flexShrink={0} mr={3} />
+                      <Text fontWeight="medium" fontSize={{ base: "sm", md: "md" }}>
+                        {skill}
+                      </Text>
+                    </MotionFlex>
                   ))}
                 </Grid>
               </motion.div>
             </AnimatePresence>
-          </Box>
+          </MotionBox>
         </VStack>
       </MotionVStack>
     </MotionVStack>
