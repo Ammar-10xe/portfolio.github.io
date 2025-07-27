@@ -85,7 +85,7 @@ export default function ExperienceSummary() {
           fontSize={{ base: "md", md: "lg", xl: "xl", "2xl": "2xl" }}
         >
           {
-            "I am in my final year as an undergraduate at the National University of Singapore's School of Computing, and I'm looking to graduate in summer 2025. I enjoy working on code, solving problems, and learning about new technologies. On the side, I do a bunch of a bit of calisthenics, speedcubing, cooking, and piano, to keep my mental health in check."
+            "As a Design Verification Engineer with over three years of experience, I specialize in RISC-V CPU and SoC verification. I build advanced UVM testbenches, validate hardware with C and assembly tests, and automate workflows using SystemVerilog and Python.I thrive on solving tough hardware challenges and am passionate about computer architecture. Let's connect to talk about the future of chip design and RISC-V!"
           }
         </Text>
         <ResumeButton />
