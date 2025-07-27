@@ -68,12 +68,11 @@ const SkillBar = ({ skill, level }: SkillBarProps) => {
       ref={ref}
       align="flex-start" 
       w="full" 
-      // spacing={1} 
+      spacing={1} 
       onClick={handleClick}
       cursor="pointer"
       p={3}
       borderRadius="lg"
-      // CORRECTED: Replaced the CSS string with a Framer Motion transition object
       transition={{ duration: 0.2 }}
       whileHover={{ 
         scale: 1.03,
@@ -148,7 +147,7 @@ export default function WakatimeSummary() {
       width="full"
       align="stretch"
       spacing={{ base: "3rem", md: "4rem" }}
-      py="4rem"
+      pb="4rem" // EDITED: Changed from py="4rem" to remove top padding
       variants={containerVariants}
       initial="hidden"
       whileInView="show"
